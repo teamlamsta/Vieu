@@ -10,11 +10,9 @@ import 'package:vieu/controller/file_services.dart';
 import 'package:vieu/view/doctor_view/View_Request.dart';
 
 class MarkFindingsPage extends StatefulWidget {
-   MarkFindingsPage(
-      {super.key,
-      required this.data});
+  MarkFindingsPage({super.key, required this.data});
 
-   Map<String,dynamic> data;
+  Map<String, dynamic> data;
 
   @override
   State<MarkFindingsPage> createState() => _MarkFindingsPageState();
@@ -100,7 +98,7 @@ class _MarkFindingsPageState extends State<MarkFindingsPage> {
         context,
         SlidePageRoute(
             page: MarkChanges(
-        data: widget.data,
+          data: widget.data,
         )));
   }
 

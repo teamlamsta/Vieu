@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:vieu/controller/authentication_controller.dart';
 import 'package:vieu/controller/custom_route_animation.dart';
-import 'package:vieu/view/doctor_view/List_Requests.dart';
+import 'package:vieu/view/doctor_view/component_widgets/List_Requests.dart';
 import 'package:vieu/view/doctor_view/View_Request.dart';
 
 import '../../controller/database_controllers/database_controller.dart';

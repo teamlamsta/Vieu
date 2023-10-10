@@ -6,6 +6,7 @@ import 'package:vieu/controller/custom_route_animation.dart';
 import 'package:vieu/controller/database_controllers/database_controller.dart';
 import 'package:vieu/model/patient_model.dart';
 import 'package:vieu/view/doctor_view/MarkFindingsPage.dart';
+import 'package:vieu/view/doctor_view/component_widgets/comment_view.dart';
 
 class MarkChanges extends StatefulWidget {
   const MarkChanges(
@@ -151,60 +152,7 @@ class _MarkChangesState extends State<MarkChanges> {
                 SizedBox(
                   height: size.height * .03,
                 ),
-                Container(
-                  width: size.width,
-                  color: Colors.white,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: size.width * .1,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Comments",
-                        style: GoogleFonts.poppins(
-                            fontSize: size.width * .05,
-                            fontWeight: FontWeight.w600),
-                      ),
-                      SizedBox(
-                        height: size.height * .01,
-                      ),
-                      Text(
-                        widget.data['comment'],
-                        style: GoogleFonts.poppins(
-                            fontSize: size.width * .04,
-                            fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: size.height * .03,
-                      ),
-                      SizedBox(
-                        height: size.height * .08,
-                        width: size.width * .7,
-                        child: TextField(
-                          controller: _replyController,
-                          decoration: InputDecoration(
-                              fillColor: Colors.white,
-                              filled: true,
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: size.width * .07,
-                                  vertical: size.height * .01),
-                              prefixIcon:  Icon(
-                                    Icons.add_circle,
-                                    color: Theme.of(context).primaryColorDark,
-                                    size: size.width * .09,
-                                  ),
-                              hintText: "Reply",
-                              hintStyle: GoogleFonts.poppins(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w500),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10))),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
+               CommentView(comment: widget.data['comment'], replyController: _replyController)
               ],
             ),
           ),
