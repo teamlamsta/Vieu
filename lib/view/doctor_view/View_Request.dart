@@ -9,11 +9,9 @@ import 'package:vieu/view/doctor_view/MarkFindingsPage.dart';
 import 'package:vieu/view/doctor_view/component_widgets/comment_view.dart';
 
 class MarkChanges extends StatefulWidget {
-  const MarkChanges(
-      {super.key,
-      required this.data});
+  const MarkChanges({super.key, required this.data});
 
-  final Map<String,dynamic> data;
+  final Map<String, dynamic> data;
 
   @override
   State<MarkChanges> createState() => _MarkChangesState();
@@ -55,7 +53,8 @@ class _MarkChangesState extends State<MarkChanges> {
                 CircleAvatar(
                   radius: size.width * .09,
                   backgroundImage: NetworkImage(patients
-                      .firstWhere((element) => element.name == widget.data['patientName'])
+                      .firstWhere((element) =>
+                          element.name == widget.data['patientName'])
                       .imageUrl),
                 ),
                 SizedBox(
@@ -97,7 +96,8 @@ class _MarkChangesState extends State<MarkChanges> {
                         context,
                         SlidePageRoute(
                             page: MarkFindingsPage(
-                              data: widget.data,)));
+                          data: widget.data,
+                        )));
                   },
                   style: ElevatedButton.styleFrom(
                       elevation: 4,
@@ -120,7 +120,7 @@ class _MarkChangesState extends State<MarkChanges> {
                   height: size.height * .03,
                 ),
                 ElevatedButton.icon(
-                  onPressed: () async{
+                  onPressed: () async {
                     await submitReport();
                     Navigator.pop(context);
                   },
@@ -152,7 +152,9 @@ class _MarkChangesState extends State<MarkChanges> {
                 SizedBox(
                   height: size.height * .03,
                 ),
-               CommentView(comment: widget.data['comment'], replyController: _replyController)
+                CommentView(
+                    comment: widget.data['comment'],
+                    replyController: _replyController)
               ],
             ),
           ),
@@ -160,9 +162,9 @@ class _MarkChangesState extends State<MarkChanges> {
   }
 
   Future<void> submitReport() async {
-   final database = await DataBaseServices().database;
-   await database!.update('request', {'status': 'Accepted','reply': _replyController.text},
-       where: 'id = ?', whereArgs: [widget.data['id']]);
-
+    final database = await DataBaseServices().database;
+    await database!.update(
+        'request', {'status': 'Accepted', 'reply': _replyController.text},
+        where: 'id = ?', whereArgs: [widget.data['id']]);
   }
 }

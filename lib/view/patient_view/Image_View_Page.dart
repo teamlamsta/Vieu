@@ -183,13 +183,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                     });
 
                     await runInference(File(widget.imagePath));
-                    Navigator.push(
-                        context,
-                        SlidePageRoute(
-                            page: ResultsPage(
-                          imagePath: widget.imagePath,
-                          prediction: prediction,
-                        )));
+                   nextPage();
                     setState(() {
                       analyze = false;
                     });
@@ -222,5 +216,15 @@ class _ImageViewPageState extends State<ImageViewPage> {
 
     }
     return "";
+  }
+  void nextPage(){
+    Navigator.push(
+        context,
+        SlidePageRoute(
+            page: ResultsPage(
+              imagePath: widget.imagePath,
+              prediction: prediction,
+            )));
+
   }
 }

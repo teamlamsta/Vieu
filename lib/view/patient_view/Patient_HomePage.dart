@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vieu/controller/custom_route_animation.dart';
-import 'package:vieu/view/patient_view/Patients_Recents_Page.dart';
 import 'package:vieu/view/patient_view/Image_View_Page.dart';
-
-
+import 'package:vieu/view/patient_view/Patients_Recents_Page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -37,10 +35,9 @@ class HomePageState extends State<HomePage> {
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
-
       appBar: AppBar(
         titleSpacing: .1,
-        systemOverlayStyle:  SystemUiOverlayStyle(
+        systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Theme.of(context).backgroundColor,
           statusBarIconBrightness: Brightness.dark,
           statusBarBrightness: Brightness.light,
@@ -85,7 +82,6 @@ class HomePageState extends State<HomePage> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
-
                             return ValueListenableBuilder(
                               valueListenable: isLoading,
                               builder: (ctx, value, child) {
@@ -119,11 +115,8 @@ class HomePageState extends State<HomePage> {
                         children: [
                           IconButton(
                             onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  SlidePageRoute(
-                                      page: PatientRecentsPage()
-                              ));
+                              Navigator.push(context,
+                                  SlidePageRoute(page: const PatientRecentsPage()));
                             },
                             icon: Icon(Icons.format_list_bulleted_outlined,
                                 color: Colors.black, size: size.width * .08),
@@ -133,19 +126,16 @@ class HomePageState extends State<HomePage> {
                             onTap: () async {
                               if (isLoading.value == false) {
                                 isLoading.value = true;
-                                if(_controller.value.isTakingPicture){
+                                if (_controller.value.isTakingPicture) {
                                   return;
                                 }
 
-
-
-
-
                                 XFile? image = await _controller.takePicture();
 
-                                Navigator.of(context).push(SlidePageRoute(page:  ImageViewPage(
-                                          imagePath: image.path,
-                                        )));
+                                Navigator.of(context).push(SlidePageRoute(
+                                    page: ImageViewPage(
+                                  imagePath: image.path,
+                                )));
                                 await Future.delayed(
                                     const Duration(seconds: 1));
                                 isLoading.value = false;
@@ -195,8 +185,6 @@ class HomePageState extends State<HomePage> {
       // Define the resolution to use.
       ResolutionPreset.high,
     );
-
-
 
     // Next, initialize the controller. This returns a Future.
     _initializeControllerFuture = _controller.initialize();

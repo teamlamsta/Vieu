@@ -6,10 +6,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vieu/controller/file_services.dart';
 import 'package:vieu/view/patient_view/Select_Doctor.dart';
-
+import 'package:vieu/view/patient_view/component_widgets/Comment_View.dart';
 
 class ResultsPage extends StatefulWidget {
-  const ResultsPage({super.key, required this.imagePath,required this.prediction});
+  const ResultsPage(
+      {super.key, required this.imagePath, required this.prediction});
 
   final String imagePath;
   final String prediction;
@@ -24,7 +25,6 @@ class _ResultsPageState extends State<ResultsPage> {
   String fileName = "";
   File? attachment;
   TextEditingController commentController = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -123,19 +123,19 @@ class _ResultsPageState extends State<ResultsPage> {
                       backgroundColor: Theme.of(context).primaryColorDark,
                     ),
                     onPressed: () async {
-                      String image = await FileServices.storeFile(File(widget.imagePath));
+                      String image =
+                          await FileServices.storeFile(File(widget.imagePath));
                       String attachmentPath = "";
-                      if(attachment!=null) {
-                        attachmentPath = await FileServices.storeFile(attachment!);
+                      if (attachment != null) {
+                        attachmentPath =
+                            await FileServices.storeFile(attachment!);
                       }
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>  SelectDoctor(
+                          builder: (context) => SelectDoctor(
                                 attachmentPath: attachmentPath,
                                 imagePath: image,
                                 comment: comment,
                               )));
-
-
                     },
                     label: Text(
                       "Share",
@@ -227,55 +227,13 @@ class _ResultsPageState extends State<ResultsPage> {
                     ),
                     comment == ""
                         ? const SizedBox()
-                        : Dismissible(
-                            confirmDismiss: (direction) {
-                              return showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return AlertDialog(
-                                      title: Text(
-                                        "Delete Comment",
-                                        style: GoogleFonts.poppins(),
-                                      ),
-                                      content: Text(
-                                        "Are you sure you want to delete this comment?",
-                                        style: GoogleFonts.poppins(),
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context, false);
-                                            },
-                                            child: const Text("No")),
-                                        TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context, true);
-                                            },
-                                            child: Text("Yes")),
-                                      ],
-                                    );
-                                  });
-                            },
-                            background: Container(
-                              color: Colors.red,
-                              alignment: Alignment.centerLeft,
-                              child: const Icon(
-                                Icons.delete_outline_rounded,
-                                color: Colors.white,
-                              ),
-                            ),
-                            onDismissed: (direction) {
+                        : CommentView(
+                            comment: comment,
+                            deleteComment: () {
                               setState(() {
                                 comment = "";
                               });
-                            },
-                            key: const ValueKey(2),
-                            child: Text(
-                              comment,
-                              style: GoogleFonts.poppins(
-                                  fontSize: size.width * .04),
-                            ),
-                          ),
+                            }),
                     SizedBox(
                       height: size.height * .02,
                     ),
@@ -319,6 +277,5 @@ class _ResultsPageState extends State<ResultsPage> {
         ),
       ),
     );
-    ;
   }
 }

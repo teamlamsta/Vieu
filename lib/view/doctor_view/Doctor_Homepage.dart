@@ -1,16 +1,10 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:vieu/controller/authentication_controller.dart';
-import 'package:vieu/controller/custom_route_animation.dart';
 import 'package:vieu/view/doctor_view/component_widgets/List_Requests.dart';
-import 'package:vieu/view/doctor_view/View_Request.dart';
 
 import '../../controller/database_controllers/database_controller.dart';
-import '../../model/patient_model.dart';
 
 class DoctorHomePage extends StatefulWidget {
   const DoctorHomePage({super.key});
@@ -81,8 +75,6 @@ class _DoctorHomePageState extends State<DoctorHomePage> with SingleTickerProvid
           ),
           backgroundColor: Theme.of(context).backgroundColor,
           body: TabBarView(
-            
-
             children: [
               ListRequests( getRecent: getRecent('pending'),),
               ListRequests(getRecent: getRecent('Accepted'))
