@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vieu/controller/authentication_controller.dart';
-import 'package:vieu/view/patient_view/List_Reports.dart';
+import 'package:vieu/view/patient_view/component_widgets/List_Reports.dart';
 
 import '../../controller/database_controllers/database_controller.dart';
 

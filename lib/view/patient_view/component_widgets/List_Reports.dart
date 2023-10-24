@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 
-import '../../controller/custom_route_animation.dart';
-import '../../model/doctor_model.dart';
-import 'Report_View_Page.dart';
+import '../../../controller/custom_route_animation.dart';
+import '../../../model/doctor_model.dart';
+import '../Report_View_Page.dart';
 
 class ListReports extends StatelessWidget {
   const ListReports({super.key,required this.getRecent});
@@ -16,7 +16,11 @@ class ListReports extends StatelessWidget {
     return FutureBuilder(
         future: getRecent,
         builder: (ctx, snapshot) {
+
           if (snapshot.connectionState == ConnectionState.done) {
+            if(snapshot.data!.isEmpty) {
+              return Center(child: Text("No Reports Found",style: GoogleFonts.poppins(fontSize: size.width*.05,fontWeight: FontWeight.w600),));
+            }
             return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (ctx, index) {
