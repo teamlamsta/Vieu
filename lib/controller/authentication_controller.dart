@@ -19,7 +19,7 @@ class AuthenticationController{
       }
     }
     return false;
-
+    
   }
   void logout(){
     print('logout');

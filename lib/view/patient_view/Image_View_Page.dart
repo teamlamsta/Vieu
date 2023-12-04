@@ -73,24 +73,39 @@ class _ImageViewPageState extends State<ImageViewPage> {
     // Run inference with the TensorFlow Lite model using the Interpreter
     try {
       // Create input and output buffers
-      final inputBuffer = inputUint8List.buffer.asUint8List();
+      Uint8List inputBuffer = inputUint8List.buffer.asUint8List();
 
       // Determine the number of output tensors
-      final outputTensorCount = interpreter.getOutputTensors().length;
+      final outputTensorCount = interpreter.getOutputTensors().length - 3;
+      print(outputTensorCount);
 
 
+      print("................................ BEFORE outputBuffers ***************");
       // Create output buffers for all output tensors
-      List<Float32List> outputBuffers = [];
-      for (int i = 0; i < outputTensorCount; i++) {
-        final outputTensorShape = interpreter!.getOutputTensor(i).shape;
-        outputBuffers.add(Float32List(outputTensorShape.reduce((a, b) => a * b)));
-      }
+      
+      // List<Float32List> outputBuffers = List.generate(
+      //     interpreter.getOutputTensors().length - 3,
+      //     (index) => Float32List.fromList(List.filled(10, 0.0))); // Adjusted to match the expected output shape
+
+      List<List<double>> outputBuffers = List.generate(
+        outputTensorCount,
+        (index) => List<double>.filled(10, 0.0), // Adjust the size based on your actual output shape
+      );
+      print(outputBuffers.shape);
+      print("................................ BEFORE INFERENCE ***************");
 
       // Run inference
-      interpreter!.run(inputBuffer, outputBuffers);
+      interpreter.run(inputBuffer, outputBuffers);
+      
+      print("*********************************Model output : ***************");
+        
+      for (var i = 0; i < outputBuffers.length; i++) {
+        List<double> outputBuffer = outputBuffers[i];
 
-      // Process the model's output to get predictions
-      log(outputBuffers.toString());
+        // Process the model's output to get predictions
+        log(outputBuffer.toString());
+        
+      }
     } catch (err) {
       print(err.toString());
     }
