@@ -76,36 +76,52 @@ class _ImageViewPageState extends State<ImageViewPage> {
       Uint8List inputBuffer = inputUint8List.buffer.asUint8List();
 
       // Determine the number of output tensors
-      final outputTensorCount = interpreter.getOutputTensors().length - 3;
-      print(outputTensorCount);
+      // final outputTensorCount = interpreter.getOutputTensors().length;
+      // print(outputTensorCount);
 
 
-      print("................................ BEFORE outputBuffers ***************");
+      // print("................................ BEFORE outputBuffers ***************");
       // Create output buffers for all output tensors
       
       // List<Float32List> outputBuffers = List.generate(
       //     interpreter.getOutputTensors().length - 3,
       //     (index) => Float32List.fromList(List.filled(10, 0.0))); // Adjusted to match the expected output shape
 
-      List<List<double>> outputBuffers = List.generate(
-        outputTensorCount,
-        (index) => List<double>.filled(10, 0.0), // Adjust the size based on your actual output shape
-      );
-      print(outputBuffers.shape);
-      print("................................ BEFORE INFERENCE ***************");
+      // List<List<double>> outputBuffers = List.generate(
+      //   outputTensorCount,
+      //   (index) => List<double>.filled(10, 0.0), // Adjust the size based on your actual output shape
+      // );
+
+      // List<List<double>> outputBuffers = List.generate(
+      //   outputTensorCount,
+      //   (index) {
+      //     // Get the shape of the output tensor
+      //     var shape = interpreter.getOutputTensor(index).shape;
+      //     // Calculate the size of the output tensor
+      //     var size = shape.reduce((value, element) => value * element);
+      //     // Create the output buffer with the correct size
+      //     return List<double>.filled(size, 0.0);
+      //   },
+      // );
+
+      // print(outputBuffers.shape);
+      // print("................................ BEFORE INFERENCE ***************");
 
       // Run inference
-      interpreter.run(inputBuffer, outputBuffers);
-      
-      print("*********************************Model output : ***************");
-        
-      for (var i = 0; i < outputBuffers.length; i++) {
-        List<double> outputBuffer = outputBuffers[i];
+      // interpreter.run(inputBuffer, outputBuffers);
 
-        // Process the model's output to get predictions
-        log(outputBuffer.toString());
+      // interpreter.runForMultipleInputs([inputBuffer], [] as Map<int, Object>);
+      print(inputBuffer.length);
+      
+      print("*********************************inference completed***************");
         
-      }
+      // for (var i = 0; i < outputBuffers.length; i++) {
+      //   List<double> outputBuffer = outputBuffers[i];
+
+      //   // Process the model's output to get predictions
+      //   log(outputBuffer.toString());
+        
+      // }
     } catch (err) {
       print(err.toString());
     }
