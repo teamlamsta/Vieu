@@ -14,6 +14,7 @@ import 'package:tflite_flutter/src/bindings/tensorflow_lite_bindings_generated.d
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 
+
 import 'package:vieu/controller/custom_route_animation.dart';
 
 import 'ResultsPage.dart';
@@ -33,6 +34,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
   bool analyze = false;
   String prediction = '';
   late Interpreter interpreter;
+  late List<String> labels;
   late img.Image image;
   @override
   void initState() {
@@ -41,10 +43,11 @@ class _ImageViewPageState extends State<ImageViewPage> {
     loadModel();
   }
   Future<void> loadModel() async {
-    final interpreterOptions = InterpreterOptions();
-    interpreterOptions.threads = 2;
-
-    interpreter = await Interpreter.fromAsset('assets/models/model.tflite', options: interpreterOptions);
+    // Load model and labels
+    interpreter = await Interpreter.fromAsset('assets/models/model.tflite');
+    labels = await File('assets/models/labels.txt').readAsString().then((String contents) {
+      return contents.split('\n').map((String line) => line.trim()).toList();
+    });
 
   }
 
@@ -57,6 +60,8 @@ class _ImageViewPageState extends State<ImageViewPage> {
 
     // Normalize pixel values to the range [0, 1] and prepare the input data
     Uint8List inputUint8List = Uint8List(320 * 320 * 3);
+    print(inputUint8List.shape);
+
     int pixelIndex = 0;
     for (int y = 0; y < image.height; y++) {
       for (int x = 0; x < image.width; x++) {
@@ -74,54 +79,62 @@ class _ImageViewPageState extends State<ImageViewPage> {
     try {
       // Create input and output buffers
       Uint8List inputBuffer = inputUint8List.buffer.asUint8List();
-
-      // Determine the number of output tensors
-      // final outputTensorCount = interpreter.getOutputTensors().length;
-      // print(outputTensorCount);
-
-
-      // print("................................ BEFORE outputBuffers ***************");
-      // Create output buffers for all output tensors
+      print(inputBuffer.shape);
+      var input = inputBuffer.reshape([1, 320, 320, 3]);
       
-      // List<Float32List> outputBuffers = List.generate(
-      //     interpreter.getOutputTensors().length - 3,
-      //     (index) => Float32List.fromList(List.filled(10, 0.0))); // Adjusted to match the expected output shape
+      bool hasNull = inputBuffer.any((element) => element == null);
+      if (hasNull) {
+        print('The inputBuffer contains null values.');
+      } else {
+        print('The inputBuffer does not contain any null values.');
+      }
 
-      // List<List<double>> outputBuffers = List.generate(
-      //   outputTensorCount,
-      //   (index) => List<double>.filled(10, 0.0), // Adjust the size based on your actual output shape
-      // );
+      
 
-      // List<List<double>> outputBuffers = List.generate(
-      //   outputTensorCount,
-      //   (index) {
-      //     // Get the shape of the output tensor
-      //     var shape = interpreter.getOutputTensor(index).shape;
-      //     // Calculate the size of the output tensor
-      //     var size = shape.reduce((value, element) => value * element);
-      //     // Create the output buffer with the correct size
-      //     return List<double>.filled(size, 0.0);
-      //   },
-      // );
 
-      // print(outputBuffers.shape);
-      // print("................................ BEFORE INFERENCE ***************");
+      // Get the input tensor details
+      var inputShape = interpreter.getInputTensor(0).shape;
+      var inputType = interpreter.getInputTensor(0).type;
+      var inputName = interpreter.getInputTensor(0).name;
 
+      print("Input Shape: $inputShape");
+      print("Input Type: $inputType");
+      print("Input Name: $inputName");
+
+      // Get the output tensors
+      var outputTensors = interpreter.getOutputTensors();
+
+      // Print output shapes
+      for (var i = 0; i < outputTensors.length; i++) {
+        Tensor outputTensor = outputTensors[i];
+        var outputShape = outputTensor.shape;
+        print("Output $i Shape: $outputShape");
+      }
+
+      // Ensure that the input shape matches the expected shape of your model
+      assert(inputUint8List.length == inputShape.reduce((a, b) => a * b));
+
+      // Create an output buffer based on the data type of the output tensor
+      var outputShape = interpreter.getOutputTensor(0).shape;
+      var outputType = interpreter.getOutputTensor(0).type;
+
+      
+      print("Output Shapepe: $outputShape");
+      print("Output Type: $outputType");
+
+    
+       // Create output buffers for all output tensors
+      // if output tensor shape [1,10] and type is float32
+      var output = List.filled(1 * 10, 0).reshape([1, 10]);
+
+      print("`````````````````````````before inference````````````````````````````````");
       // Run inference
-      // interpreter.run(inputBuffer, outputBuffers);
+      interpreter.run(inputBuffer, output);
+      print("`````````````````````````after inference````````````````````````````````");
 
-      // interpreter.runForMultipleInputs([inputBuffer], [] as Map<int, Object>);
-      print(inputBuffer.length);
+
+
       
-      print("*********************************inference completed***************");
-        
-      // for (var i = 0; i < outputBuffers.length; i++) {
-      //   List<double> outputBuffer = outputBuffers[i];
-
-      //   // Process the model's output to get predictions
-      //   log(outputBuffer.toString());
-        
-      // }
     } catch (err) {
       print(err.toString());
     }
