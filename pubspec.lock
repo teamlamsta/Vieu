@@ -29,10 +29,10 @@ packages:
     dependency: "direct main"
     description:
       name: camera
-      sha256: f63f2687fb1795c36f7c57b18a03071880eabb0fd8b5291b0fcd3fb979cb0fb1
+      sha256: "71fb0e03618a8629a912bbf49bb664869bd16830c1d363b1096df99727b0bebb"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.5+4"
+    version: "0.10.5+6"
   camera_android:
     dependency: transitive
     description:
@@ -609,10 +609,34 @@ packages:
     dependency: "direct main"
     description:
       name: tflite_flutter
-      sha256: "7e5caf5cd6be80f417526f77dea5597184704ee89974b187eecd89b5a9dfb4e2"
+      sha256: ffb8651fdb116ab0131d6dc47ff73883e0f634ad1ab12bb2852eef1bbeab4a6a
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.2"
+    version: "0.10.4"
+  tflite_flutter_helper_plus:
+    dependency: "direct main"
+    description:
+      name: tflite_flutter_helper_plus
+      sha256: df46a79487efacf2bf9fe608fa935aaa3dce4be1af97442681975c3414eb6574
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
+  tflite_flutter_plus:
+    dependency: transitive
+    description:
+      name: tflite_flutter_plus
+      sha256: "72c7363df4be932541b82f8bc7e544df343f6dea1f6e614a3efa2a7dd73dff2e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      sha256: a97ce2013f240b2f3807bcbaf218765b6f301c3eff91092bcfa23a039e7dd151
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.2"
   typed_data:
     dependency: transitive
     description:
