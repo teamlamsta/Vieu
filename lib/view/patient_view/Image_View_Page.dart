@@ -24,9 +24,9 @@ import 'ResultsPage.dart';
 
 
 class ImageViewPage extends StatefulWidget {
-  const ImageViewPage({super.key, required this.imagePath});
+   ImageViewPage({super.key, required this.imagePath});
 
-  final String imagePath;
+  String imagePath;
 
   @override
   State<ImageViewPage> createState() => _ImageViewPageState();
@@ -36,12 +36,17 @@ class _ImageViewPageState extends State<ImageViewPage> {
   Interpreter? _interpreter;
   bool _isModelReady = false;
   String _result = '';
+
+  var min_conf_threshold = 0.5;
+  String _updatedImagePath = '';
+  
   
   bool analyze = false;
   String prediction = '';
   late Interpreter interpreter;
   late List<String> labels;
   late img.Image image;
+  
 
   @override
   void initState() {
@@ -63,6 +68,26 @@ class _ImageViewPageState extends State<ImageViewPage> {
     }
 
   }
+
+  void drawDetectionBox(img.Image image, double yMin, double xMin, double yMax, double xMax) {
+    int imageWidth = image.width;
+    int imageHeight = image.height;
+
+    // Convert normalized coordinates to image coordinates
+    int left = (xMin * imageWidth).toInt();
+    int top = (yMin * imageHeight).toInt();
+    int right = (xMax * imageWidth).toInt();
+    int bottom = (yMax * imageHeight).toInt();
+
+    // Draw detection box on the image
+    img.drawLine(image, left, top, right, top, img.getColor(255, 0, 0));
+    img.drawLine(image, right, top, right, bottom, img.getColor(255, 0, 0));
+    img.drawLine(image, right, bottom, left, bottom, img.getColor(255, 0, 0));
+    img.drawLine(image, left, bottom, left, top, img.getColor(255, 0, 0));
+  }
+
+
+  
 
   Future<void> runInference(File imageFile) async {
     // Load the image using the image package
@@ -92,12 +117,45 @@ class _ImageViewPageState extends State<ImageViewPage> {
       _interpreter!.runForMultipleInputs([tensorImage.buffer], outputs);
 
       print("Model output :");
-      // Process and print the outputs
-      print(outputs);
+
+    // Loop over all detections and draw detection boxes
+    for (int i = 0; i < outputs[1]?[0].length; i++) {
+      double yMin = outputs[1]?[0][i][0];
+      double xMin = outputs[1]?[0][i][1];
+      double yMax = outputs[1]?[0][i][2];
+      double xMax = outputs[1]?[0][i][3];
+
+      // Draw detection box
+      drawDetectionBox(image, yMin, xMin, yMax, xMax);
+    }
+
+    // Save the modified image to the old image path
+    final modifiedBytes = img.encodePng(image!);
+    final updatedImagePath = widget.imagePath.replaceAll('.png', '_modified.png');
+    await File(updatedImagePath).writeAsBytes(modifiedBytes);
+    setState(() {
+      _updatedImagePath = updatedImagePath;
+    });
+
+    displayUpdatedImage();
+
+    // Print each output tensor
+    outputs.forEach((key, value) {
+      print("Output $key:");
+      print(value);
+    });
+      
       
     } catch (err) {
       print(err.toString());
     }
+  }
+
+  void displayUpdatedImage() {
+    setState(() {
+      // Set the widget's imagePath to the updatedImagePath
+      widget.imagePath = _updatedImagePath;
+    });
   }
 
   @override
@@ -141,7 +199,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(size.width * .2),
                       child: Image.file(
-                        File(widget.imagePath),
+                        File(_updatedImagePath.isNotEmpty ? _updatedImagePath : widget.imagePath),
                         fit: BoxFit.cover,
                       ))),
           Row(
@@ -203,32 +261,36 @@ class _ImageViewPageState extends State<ImageViewPage> {
     );
   }
   Future<String> _resizeImage() async {
-    final originalBytes = await File(widget.imagePath).readAsBytes();
-    final originalImage = img.decodeImage(Uint8List.fromList(originalBytes));
+  final originalBytes = await File(widget.imagePath).readAsBytes();
+  final originalImage = img.decodeImage(Uint8List.fromList(originalBytes));
 
-    if (originalImage != null) {
-      final resizedImage = img.copyResize(originalImage, width: 320, height: 320);
-      final resizedBytes = img.encodeJpg(resizedImage); // Change to encodePng if needed
+  if (originalImage != null) {
+    final resizedImage = img.copyResize(originalImage, width: 320, height: 320);
+    final resizedBytes = img.encodePng(resizedImage);
 
-      final directory = await getApplicationDocumentsDirectory();
+    final originalDirectory = File(widget.imagePath).parent.path;
+    final resizedFilePath = '$originalDirectory/resized_image.png';
 
-      final resizedFilePath = '${directory.path}/resized_image.png'; // Change file extension if needed
-
-      final resizedImageFile = File(resizedFilePath);
-      await resizedImageFile.writeAsBytes(resizedBytes);
-      return resizedFilePath;
-
-    }
-    return "";
+    final resizedImageFile = File(resizedFilePath);
+    await resizedImageFile.writeAsBytes(resizedBytes);
+    return resizedFilePath;
   }
-  void nextPage(){
-    Navigator.push(
-        context,
-        SlidePageRoute(
-            page: ResultsPage(
-              imagePath: widget.imagePath,
-              prediction: prediction,
-            )));
+  return "";
+}
 
-  }
+  void nextPage() async {
+  // Resize the image before passing it to the ResultsPage
+  String resizedImagePath = await _resizeImage();
+
+  Navigator.push(
+    context,
+    SlidePageRoute(
+      page: ResultsPage(
+        imagePath: resizedImagePath,
+        prediction: prediction,
+      ),
+    ),
+  );
+}
+
 }
