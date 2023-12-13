@@ -39,6 +39,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
 
   var min_conf_threshold = 0.5;
   String _updatedImagePath = '';
+  List<double> scores = [];
   
   
   bool analyze = false;
@@ -118,15 +119,19 @@ class _ImageViewPageState extends State<ImageViewPage> {
 
       print("Model output :");
 
-    // Loop over all detections and draw detection boxes
+    
+    // Loop over all detections and draw detection box if confidence is above the minimum threshold
     for (int i = 0; i < outputs[1]?[0].length; i++) {
-      double yMin = outputs[1]?[0][i][0];
-      double xMin = outputs[1]?[0][i][1];
-      double yMax = outputs[1]?[0][i][2];
-      double xMax = outputs[1]?[0][i][3];
+      double score = outputs[0]?[0][i];
+      if (score > min_conf_threshold && score <= 1.0) {
+        double yMin = outputs[1]?[0][i][0];
+        double xMin = outputs[1]?[0][i][1];
+        double yMax = outputs[1]?[0][i][2];
+        double xMax = outputs[1]?[0][i][3];
 
-      // Draw detection box
-      drawDetectionBox(image, yMin, xMin, yMax, xMax);
+        // Draw detection box
+        drawDetectionBox(image, yMin, xMin, yMax, xMax);
+      }
     }
 
     // Save the modified image to the old image path
