@@ -17,14 +17,14 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  late CameraController _controller;
+  late CameraController? _controller;
 
   late List<CameraDescription> cameras;
   late CameraDescription selectedCamera;
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
 
     super.dispose();
   }
@@ -73,6 +73,12 @@ class HomePageState extends State<HomePage> {
               );
             }
 
+            // Check if _controller is null before building the UI
+            if (_controller == null) {
+              // You can return a loading indicator or an empty container
+              return Container();
+            }
+
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -96,7 +102,8 @@ class HomePageState extends State<HomePage> {
                                 color: Theme.of(context).primaryColor,
                               ));
                             } else {
-                              return CameraPreview(_controller);
+                              // Check if _controller is not null before using it
+                              return CameraPreview(_controller!);
                             }
                           },
                         ))),
@@ -120,15 +127,15 @@ class HomePageState extends State<HomePage> {
                           onTap: () async {
                             if (isLoading.value == false) {
                               isLoading.value = true;
-                              if (_controller.value.isTakingPicture) {
+                              if (_controller!.value.isTakingPicture) {
                                 return;
                               }
 
-                              XFile? image = await _controller.takePicture();
+                              XFile? image = await _controller?.takePicture();
 
                               Navigator.of(context).push(SlidePageRoute(
                                   page: ImageViewPage(
-                                imagePath: image.path,
+                                imagePath: image!.path,
                               )));
                               await Future.delayed(const Duration(seconds: 1));
                               isLoading.value = false;
@@ -150,7 +157,7 @@ class HomePageState extends State<HomePage> {
                               selectedCamera.name == "0"
                                   ? selectedCamera = cameras[1]
                                   : selectedCamera = cameras[0];
-                              _controller.setDescription(selectedCamera);
+                              _controller?.setDescription(selectedCamera);
                             },
                             icon: Icon(
                               Icons.autorenew_rounded,
@@ -181,7 +188,7 @@ class HomePageState extends State<HomePage> {
       ResolutionPreset.high,
     );
 
-   await _controller.initialize();
+   await _controller?.initialize();
    return true;
 
   }
