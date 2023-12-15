@@ -21,6 +21,14 @@ class HomePageState extends State<HomePage> {
 
   late List<CameraDescription> cameras;
   late CameraDescription selectedCamera;
+  bool isControllerInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initialize();
+    
+  }
 
   @override
   void dispose() {
@@ -29,11 +37,40 @@ class HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  void initialize() async {
+    bool request = false;
+
+    cameras = await availableCameras();
+    selectedCamera = cameras.first;
+
+    _controller = CameraController(
+      selectedCamera,
+      ResolutionPreset.high,
+    );
+
+    await _controller?.initialize();
+
+    setState(() {
+      isControllerInitialized = true;
+    });
+    
+  }
+
   ValueNotifier<bool> isLoading = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
+    if (_controller == null || !_controller!.value.isInitialized) {
+      // You can return a loading indicator or an empty container
+      return Center(
+        child: CircularProgressIndicator(
+          color: Theme.of(context).primaryColor,
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
@@ -62,25 +99,10 @@ class HomePageState extends State<HomePage> {
               ))
         ],
       ),
-      body: FutureBuilder(
-          future: initialize(),
-          builder: (ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting ||snapshot.connectionState == ConnectionState.none || snapshot.data == false) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: Theme.of(context).primaryColor,
-                ),
-              );
-            }
-
-            // Check if _controller is null before building the UI
-            if (_controller == null) {
-              // You can return a loading indicator or an empty container
-              return Container();
-            }
+      body: 
 
 
-            return Column(
+             Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -167,30 +189,10 @@ class HomePageState extends State<HomePage> {
                       ]),
                 ),
               ],
+             ),
             );
-          }),
-    );
+          }
+    
   }
 
-  Future<bool> initialize() async {
-    bool request = false;
-
-    request = await Permission.camera.request().isGranted;
-    while (request == false) {
-      request = await Permission.camera.request().isGranted;
-    }
-
-    cameras = await availableCameras();
-    selectedCamera = cameras.first;
-
-    _controller = CameraController(
-      selectedCamera,
-      ResolutionPreset.high,
-    );
-
-   await _controller?.initialize();
-   return true;
-
-  }
-
-}
+  
