@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vieu/view/patient_view/Patient_HomePage.dart';
 import 'package:vieu/view/auth_pages/LoginPage.dart';
 import 'package:vieu/view/doctor_view/Doctor_Homepage.dart';
@@ -25,8 +26,35 @@ class VieuApp extends StatelessWidget {
         primaryColorDark: const Color(0xff008758),primaryColorLight: const Color(0xffADE5D4
     ),
       ),
-      home:  LoginPage()
+      home:  FutureBuilder(
+        future: dataFetch(),
+        builder: (ctx,snapshot){
+          if(snapshot.connectionState==ConnectionState.waiting){
+            return const Scaffold(body: Center(child: CircularProgressIndicator(),),);
+          }
+          if(!snapshot.data!["isAuthenticated"]) {
+            return const LoginPage();
+          } else if(snapshot.data!["user"]=="patient"){
+            return const HomePage();
+          }
+          else{
+            return const DoctorHomePage();
+          }
+        },
+      )
     );
+  }
+  //to fetch authentication status and user
+  Future<Map> dataFetch()async{
+    final inf = await SharedPreferences.getInstance();
+    Map<String,dynamic> data={};
+    data.addAll({
+      "isAuthenticated": inf.getBool("isAuthenticated")??false,
+      "user":inf.getString("user")??""
+
+    });
+    return data;
+
   }
 }
 

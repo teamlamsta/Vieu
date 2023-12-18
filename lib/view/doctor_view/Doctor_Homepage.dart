@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vieu/controller/authentication_controller.dart';
 import 'package:vieu/view/doctor_view/component_widgets/List_Requests.dart';
 
@@ -64,13 +65,15 @@ class _DoctorHomePageState extends State<DoctorHomePage> with SingleTickerProvid
             backgroundColor: Theme.of(context).backgroundColor,
             elevation: 0,
             actions: [
-              IconButton(
-                  onPressed: () {},
-                  icon: const Icon(
-                    Icons.settings,
-                    color: Colors.black,
-                    weight: .5,
-                  ))
+              PopupMenuButton(itemBuilder: (ctx){
+                return [
+                  PopupMenuItem(child: Text("Logout"),onTap: ()async{
+                    final ref = await SharedPreferences.getInstance();
+                    ref.clear();
+                    Navigator.pushReplacementNamed(context, '/login');
+                  },)
+                ];
+              })
             ],
           ),
           backgroundColor: Theme.of(context).backgroundColor,

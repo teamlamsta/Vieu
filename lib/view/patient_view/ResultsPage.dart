@@ -25,6 +25,12 @@ class _ResultsPageState extends State<ResultsPage> {
   String fileName = "";
   File? attachment;
   TextEditingController commentController = TextEditingController();
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -1,30 +1,22 @@
-
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
-import 'package:tflite_flutter_helper_plus/tflite_flutter_helper_plus.dart';
-
-
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image/image.dart' as img;
+import 'package:image_size_getter/file_input.dart';
 import 'package:lottie/lottie.dart';
-import 'package:path_provider/path_provider.dart';
-
 import 'package:tflite_flutter/tflite_flutter.dart';
-
-
-
+import 'package:tflite_flutter_helper_plus/tflite_flutter_helper_plus.dart';
 import 'package:vieu/controller/custom_route_animation.dart';
+import 'package:image_size_getter/image_size_getter.dart';
 
 import 'ResultsPage.dart';
 
-
-
 class ImageViewPage extends StatefulWidget {
-   ImageViewPage({super.key, required this.imagePath});
+  ImageViewPage({super.key, required this.imagePath});
 
   String imagePath;
 
@@ -40,14 +32,12 @@ class _ImageViewPageState extends State<ImageViewPage> {
   var min_conf_threshold = 0.5;
   String _updatedImagePath = '';
   List<double> scores = [];
-  
-  
+
   bool analyze = false;
   String prediction = '';
   late Interpreter interpreter;
   late List<String> labels;
   late img.Image image;
-  
 
   @override
   void initState() {
@@ -57,8 +47,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
 
   Future<void> loadModel() async {
     try {
-      _interpreter =
-          await Interpreter.fromAsset('assets/models/model.tflite');
+      _interpreter = await Interpreter.fromAsset('assets/models/model.tflite');
       setState(() {
         _isModelReady = true;
       });
@@ -67,10 +56,10 @@ class _ImageViewPageState extends State<ImageViewPage> {
       print('Failed to load model.');
       print(e);
     }
-
   }
 
-  void drawDetectionBox(img.Image image, double yMin, double xMin, double yMax, double xMax) {
+  void drawDetectionBox(
+      img.Image image, double yMin, double xMin, double yMax, double xMax) {
     int imageWidth = image.width;
     int imageHeight = image.height;
 
@@ -87,70 +76,61 @@ class _ImageViewPageState extends State<ImageViewPage> {
     img.drawLine(image, left, bottom, left, top, img.getColor(255, 0, 0));
   }
 
-
-  
-
   Future<void> runInference(File imageFile) async {
     // Load the image using the image package
     img.Image? image = img.decodeImage(imageFile.readAsBytesSync());
 
     // Resize the image to match the model's input dimensions (320x320)
+
     image = img.copyResize(image!, width: 320, height: 320);
 
     var tensorImage = TensorImage.fromImage(image);
 
     var output1 = List.filled(10, 0.0).reshape([1, 10]);
-    var output2 = List.generate(1, (i) => List.generate(10, (j) => List.filled(4, 0.0))).reshape([1, 10, 4]);
+    var output2 =
+        List.generate(1, (i) => List.generate(10, (j) => List.filled(4, 0.0)))
+            .reshape([1, 10, 4]);
     var output3 = List.filled(1, 0.0);
     var output4 = List.filled(10, 0.0).reshape([1, 10]);
-    var outputs = {
-      0:output1,
-      1:output2,
-      2:output3,
-      3:output4
-    };
-
-    
+    var outputs = {0: output1, 1: output2, 2: output3, 3: output4};
 
     // Run inference with the TensorFlow Lite model using the Interpreter
     try {
-        // Run the model
+      // Run the model
       _interpreter!.runForMultipleInputs([tensorImage.buffer], outputs);
 
       print("Model output :");
 
-    
-    // Loop over all detections and draw detection box if confidence is above the minimum threshold
-    for (int i = 0; i < outputs[1]?[0].length; i++) {
-      double score = outputs[0]?[0][i];
-      if (score > min_conf_threshold && score <= 1.0) {
-        double yMin = outputs[1]?[0][i][0];
-        double xMin = outputs[1]?[0][i][1];
-        double yMax = outputs[1]?[0][i][2];
-        double xMax = outputs[1]?[0][i][3];
+      // Loop over all detections and draw detection box if confidence is above the minimum threshold
+      for (int i = 0; i < outputs[1]?[0].length; i++) {
+        double score = outputs[0]?[0][i];
+        if (score > min_conf_threshold && score <= 1.0) {
+          double yMin = outputs[1]?[0][i][0];
+          double xMin = outputs[1]?[0][i][1];
+          double yMax = outputs[1]?[0][i][2];
+          double xMax = outputs[1]?[0][i][3];
 
-        // Draw detection box
-        drawDetectionBox(image, yMin, xMin, yMax, xMax);
+          // Draw detection box
+          drawDetectionBox(image, yMin, xMin, yMax, xMax);
+        }
       }
-    }
 
-    // Save the modified image to the old image path
-    final modifiedBytes = img.encodePng(image!);
-    final updatedImagePath = widget.imagePath.replaceAll('.png', '_modified.png');
-    await File(updatedImagePath).writeAsBytes(modifiedBytes);
-    setState(() {
-      _updatedImagePath = updatedImagePath;
-    });
+      // Save the modified image to the old image path
+      final modifiedBytes = img.encodePng(image!);
+      final updatedImagePath =
+          widget.imagePath.replaceAll('.png', '_modified.png');
+      await File(updatedImagePath).writeAsBytes(modifiedBytes);
+      setState(() {
+        _updatedImagePath = updatedImagePath;
+      });
 
-    displayUpdatedImage();
+      displayUpdatedImage();
 
-    // Print each output tensor
-    outputs.forEach((key, value) {
-      print("Output $key:");
-      print(value);
-    });
-      
-      
+      // Print each output tensor
+      outputs.forEach((key, value) {
+        print("Output $key:");
+        print(value);
+      });
     } catch (err) {
       print(err.toString());
     }
@@ -168,7 +148,6 @@ class _ImageViewPageState extends State<ImageViewPage> {
     Tflite.close();
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +183,9 @@ class _ImageViewPageState extends State<ImageViewPage> {
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(size.width * .2),
                       child: Image.file(
-                        File(_updatedImagePath.isNotEmpty ? _updatedImagePath : widget.imagePath),
+                        File(_updatedImagePath.isNotEmpty
+                            ? _updatedImagePath
+                            : widget.imagePath),
                         fit: BoxFit.cover,
                       ))),
           Row(
@@ -250,7 +231,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
                     });
 
                     await runInference(File(widget.imagePath));
-                   nextPage();
+                    nextPage();
                     setState(() {
                       analyze = false;
                     });
@@ -265,37 +246,42 @@ class _ImageViewPageState extends State<ImageViewPage> {
       ),
     );
   }
+
   Future<String> _resizeImage() async {
-  final originalBytes = await File(widget.imagePath).readAsBytes();
-  final originalImage = img.decodeImage(Uint8List.fromList(originalBytes));
+    final originalBytes = await File(widget.imagePath).readAsBytes();
+    final originalImage = img.decodeImage(Uint8List.fromList(originalBytes));
 
-  if (originalImage != null) {
-    final resizedImage = img.copyResize(originalImage, width: 320, height: 320);
-    final resizedBytes = img.encodePng(resizedImage);
+    if (originalImage != null) {
+      Size size = ImageSizeGetter.getSize(FileInput(File(widget.imagePath)));
+      int start = (size.height - size.width) ~/ 2;
+      image = img.copyCrop(originalImage, 0, start, size.width, size.height);
 
-    final originalDirectory = File(widget.imagePath).parent.path;
-    final resizedFilePath = '$originalDirectory/resized_image.png';
+      final resizedImage =
+          img.copyResize(originalImage, width: 320, height: 320);
+      final resizedBytes = img.encodePng(resizedImage);
 
-    final resizedImageFile = File(resizedFilePath);
-    await resizedImageFile.writeAsBytes(resizedBytes);
-    return resizedFilePath;
+      final originalDirectory = File(widget.imagePath).parent.path;
+      final resizedFilePath = '$originalDirectory/resized_image.png';
+
+      final resizedImageFile = File(resizedFilePath);
+      await resizedImageFile.writeAsBytes(resizedBytes);
+      return resizedFilePath;
+    }
+    return "";
   }
-  return "";
-}
 
   void nextPage() async {
-  // Resize the image before passing it to the ResultsPage
-  String resizedImagePath = await _resizeImage();
+    // Resize the image before passing it to the ResultsPage
+    String resizedImagePath = await _resizeImage();
 
-  Navigator.push(
-    context,
-    SlidePageRoute(
-      page: ResultsPage(
-        imagePath: resizedImagePath,
-        prediction: prediction,
+    Navigator.push(
+      context,
+      SlidePageRoute(
+        page: ResultsPage(
+          imagePath: resizedImagePath,
+          prediction: prediction,
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 }

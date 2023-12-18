@@ -27,6 +27,8 @@ dependencies:
   tflite_flutter: ^0.10.2
   permission_handler: ^11.0.1
   tflite_flutter_helper_plus: ^0.0.2
+  image_size_getter: ^2.1.2
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/authentication_controller.dart';
 
@@ -136,18 +137,23 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
               SizedBox(
                 width: size.width * .9,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async{
                  bool isAuthenticated=    AuthenticationController.login(emailController.text,
                         passwordController.text, controller.index == 0);
-                 print(isAuthenticated);
+
+                   //for persisting the login until the user logout
+                  final instance= await SharedPreferences.getInstance();
+                  instance.setBool("isAuthenticated", true);
+
                   if(isAuthenticated&&controller.index==1){
                     FocusManager.instance.primaryFocus?.unfocus();
-
-                    Navigator.pushNamed(context, '/home');}
+                    instance.setString("user", "patient");
+                    Navigator.pushReplacementNamed(context, '/home');}
                   else if(isAuthenticated&&controller.index==0){
                     FocusManager.instance.primaryFocus?.unfocus();
+                    instance.setString("user", "doctor");
 
-                    Navigator.pushNamed(context, '/doctor_homepage');
+                    Navigator.pushReplacementNamed(context, '/doctor_homepage');
                   }
                   else{
                     ScaffoldMessenger.of(context).showSnackBar(  SnackBar(backgroundColor:Colors.red, content: Text("Invalid Credentials",style: GoogleFonts.poppins(),)));
