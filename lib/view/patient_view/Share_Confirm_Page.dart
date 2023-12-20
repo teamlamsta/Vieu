@@ -46,7 +46,8 @@ class ShareConfirmPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .1,vertical: MediaQuery.of(context).size.height * .015),
             ),
             onPressed: () {
-              Navigator.popUntil(context, ModalRoute.withName('/home'));
+
+              Navigator.pushNamedAndRemoveUntil(context, '/home',ModalRoute.withName('/'));
             },
             label: Text("Done",style: GoogleFonts.poppins(fontSize: MediaQuery.of(context).size.width*.05,color: Colors.black,fontWeight: FontWeight.w600),),
             icon: const Icon(Icons.done_outline_rounded,color: Colors.black,),

@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 
 class HomePageState extends State<HomePage> {
   late CameraController? _controller = CameraController(
-    CameraDescription(
+    const CameraDescription(
         name: '',
         lensDirection: CameraLensDirection.back,
         sensorOrientation: 0),
@@ -64,6 +64,7 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
+        leading: SizedBox(),
         titleSpacing: .1,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Theme.of(context).backgroundColor,
