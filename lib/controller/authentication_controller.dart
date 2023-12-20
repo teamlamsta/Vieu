@@ -22,7 +22,7 @@ class AuthenticationController{
           currentUser = patients[i].name;
           final ref = await SharedPreferences.getInstance();
           ref.setString("userName", currentUser??"");
-          print("${ref.getString("userName")!}..........");
+
           return true;
         }
       }

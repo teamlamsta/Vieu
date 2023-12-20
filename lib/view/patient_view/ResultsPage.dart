@@ -29,7 +29,7 @@ class _ResultsPageState extends State<ResultsPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("At results page"+widget.imagePath);
+
 
     final size = MediaQuery.of(context).size;
     return Scaffold(
@@ -133,6 +133,7 @@ class _ResultsPageState extends State<ResultsPage> {
                         attachmentPath =
                             await FileServices.storeFile(attachment!);
                       }
+                      if(!context.mounted)return;
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => SelectDoctor(
                                 attachmentPath: attachmentPath,

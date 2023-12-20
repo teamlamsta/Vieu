@@ -114,12 +114,12 @@ class _PatientRecentsPageState extends State<PatientRecentsPage> {
     final ref = await SharedPreferences.getInstance();
 
     String? patientName=ref.getString("userName");
-    print("patientName"+patientName!);
+
     final result = await database!.rawQuery(
         'select * from request where patientName = "$patientName" and status = "$status" order by createdAt desc');
     print(result);
 
-    print("status"+status);
+
     return result;
   }
 }

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../controller/custom_route_animation.dart';
 import '../../model/doctor_model.dart';
 
 class ReportViewPage extends StatelessWidget {
@@ -188,7 +187,7 @@ class ReportViewPage extends StatelessWidget {
 
                           ],
                         ),
-                      ):SizedBox(),
+                      ):const SizedBox(),
                       SizedBox(
                         height: size.height * .02,
                       ),

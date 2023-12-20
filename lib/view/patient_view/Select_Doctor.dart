@@ -66,7 +66,7 @@ String imagePath,comment,attachmentPath;
               final ref = await SharedPreferences.getInstance();
               String? patientName = ref.getString("userName");
               await database!.insert('request', {"patientName": patientName, "doctorName": doctors[index].name,"createdAt": DateTime.now().toIso8601String(),  "imagePath": imagePath,"attachmentPath":attachmentPath, "status": "pending","comment":comment});
-
+             if(!context.mounted)return;
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) =>  ShareConfirmPage(doctor: doctors[index],)));
             },

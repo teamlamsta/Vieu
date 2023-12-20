@@ -148,6 +148,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                   if(isAuthenticated&&controller.index==1){
                     FocusManager.instance.primaryFocus?.unfocus();
                     instance.setString("user", "patient");
+                    if(!context.mounted)return;
                     Navigator.pushReplacementNamed(context, '/home');}
                   else if(isAuthenticated&&controller.index==0){
                     FocusManager.instance.primaryFocus?.unfocus();

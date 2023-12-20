@@ -155,7 +155,7 @@ class HomePageState extends State<HomePage> {
                         print(image!.path);
                         Navigator.of(context).push(SlidePageRoute(
                             page: ImageViewPage(
-                          imagePath: image!.path,
+                          imagePath: image.path,
                         )));
                         await Future.delayed(const Duration(seconds: 1));
                         isLoading.value = false;

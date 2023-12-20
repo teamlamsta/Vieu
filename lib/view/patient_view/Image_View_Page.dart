@@ -141,7 +141,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    print("onwidget build"+widget.imagePath);
+
 
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,

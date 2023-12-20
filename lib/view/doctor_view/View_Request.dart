@@ -122,6 +122,7 @@ class _MarkChangesState extends State<MarkChanges> {
                 ElevatedButton.icon(
                   onPressed: () async {
                     await submitReport();
+                    if(!context.mounted)return;
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
