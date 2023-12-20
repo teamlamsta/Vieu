@@ -138,7 +138,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                 width: size.width * .9,
                 child: ElevatedButton(
                   onPressed: () async{
-                 bool isAuthenticated=    AuthenticationController.login(emailController.text,
+                 bool isAuthenticated=   await AuthenticationController.login(emailController.text,
                         passwordController.text, controller.index == 0);
 
                    //for persisting the login until the user logout

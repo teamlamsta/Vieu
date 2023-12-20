@@ -12,6 +12,7 @@ class ReportViewPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(data);
     final size = MediaQuery.of(context).size;
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
@@ -149,7 +150,7 @@ class ReportViewPage extends StatelessWidget {
                       SizedBox(
                         height: size.height * .02,
                       ),
-                      data["reply"]!=""?
+                      data["reply"]!=null && data["reply"]!=""?
                       Container(
                         width: size.width*.8,
                           decoration: BoxDecoration(
@@ -179,7 +180,7 @@ class ReportViewPage extends StatelessWidget {
                               height: size.height * .01,
                             ),
                             Text(
-                              data["reply"],
+                              data["reply"]??"",
                               style: GoogleFonts.poppins(
                                   fontSize: size.width * .035,
                                   fontWeight: FontWeight.w400),

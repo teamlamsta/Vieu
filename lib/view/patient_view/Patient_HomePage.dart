@@ -35,12 +35,7 @@ class HomePageState extends State<HomePage> {
     initialize();
   }
 
-  @override
-  void dispose() {
-    _controller?.dispose();
 
-    super.dispose();
-  }
 
   void initialize() async {
     bool request = false;

@@ -24,8 +24,12 @@ class ListReports extends StatelessWidget {
             return ListView.builder(
                 itemCount: snapshot.data!.length,
                 itemBuilder: (ctx, index) {
+                  print(snapshot.data![index]['createdAt']);
+                  print(snapshot.data![index]['doctorName']);
+
                   return ListTile(
                     onTap: (){
+
                       Navigator.push(context,SlidePageRoute(page:ReportViewPage(data: snapshot.data![index],)));
                     },
                     trailing: Text(DateFormat.MMMd().format(

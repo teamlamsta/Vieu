@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vieu/controller/database_controllers/RequestTable.dart';
 import 'package:vieu/controller/authentication_controller.dart';
 import 'package:vieu/controller/database_controllers/database_controller.dart';
@@ -62,7 +63,9 @@ String imagePath,comment,attachmentPath;
             title: Text(doctors[index].name,style: GoogleFonts.poppins(fontWeight: FontWeight.w600),),
             onTap: () async{
               final database = await DataBaseServices().database;
-              await database!.insert('request', {"patientName": AuthenticationController.currentUser, "doctorName": doctors[index].name,"createdAt": DateTime.now().toIso8601String(),  "imagePath": imagePath,"attachmentPath":attachmentPath, "status": "pending","comment":comment});
+              final ref = await SharedPreferences.getInstance();
+              String? patientName = ref.getString("userName");
+              await database!.insert('request', {"patientName": patientName, "doctorName": doctors[index].name,"createdAt": DateTime.now().toIso8601String(),  "imagePath": imagePath,"attachmentPath":attachmentPath, "status": "pending","comment":comment});
 
               Navigator.push(context,
                   MaterialPageRoute(builder: (context) =>  ShareConfirmPage(doctor: doctors[index],)));

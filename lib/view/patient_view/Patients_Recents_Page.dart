@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vieu/controller/authentication_controller.dart';
 import 'package:vieu/view/patient_view/component_widgets/List_Reports.dart';
 
@@ -110,9 +111,15 @@ class _PatientRecentsPageState extends State<PatientRecentsPage> {
 
   Future<List<Map<String, dynamic>>> getRecent(String status) async {
     final database = await DataBaseServices().database;
-    String? patientName = AuthenticationController.currentUser;
+    final ref = await SharedPreferences.getInstance();
 
-    return await database!.rawQuery(
+    String? patientName=ref.getString("userName");
+    print("patientName"+patientName!);
+    final result = await database!.rawQuery(
         'select * from request where patientName = "$patientName" and status = "$status" order by createdAt desc');
+    print(result);
+
+    print("status"+status);
+    return result;
   }
 }

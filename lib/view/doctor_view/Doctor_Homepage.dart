@@ -88,7 +88,10 @@ class _DoctorHomePageState extends State<DoctorHomePage> with SingleTickerProvid
 
   Future<List<Map<String, dynamic>>> getRecent(String status) async {
     final database = await DataBaseServices().database;
-    String? doctorName = AuthenticationController.currentUser;
+    final ref = await SharedPreferences.getInstance();
+
+    String? doctorName=ref.getString("userName");
+
 
     return await database!
         .rawQuery('select * from request where doctorName = "$doctorName" and status = "$status" order by createdAt desc');
