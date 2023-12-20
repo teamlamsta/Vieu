@@ -38,7 +38,7 @@ class HomePageState extends State<HomePage> {
 
 
   void initialize() async {
-    bool request = false;
+
 
     cameras = await availableCameras();
     selectedCamera = cameras.first;
@@ -64,7 +64,7 @@ class HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
-        leading: SizedBox(),
+        leading: const SizedBox(),
         titleSpacing: .1,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: Theme.of(context).backgroundColor,
@@ -83,9 +83,10 @@ class HomePageState extends State<HomePage> {
         actions:  [
          PopupMenuButton(itemBuilder: (ctx){
            return [
-              PopupMenuItem(child: Text("Logout"),onTap: ()async{
+              PopupMenuItem(child: const Text("Logout"),onTap: ()async{
                final ref = await SharedPreferences.getInstance();
                ref.clear();
+               if (!context.mounted) return;
                Navigator.pushReplacementNamed(context, '/login');
              },)
            ];
@@ -150,7 +151,8 @@ class HomePageState extends State<HomePage> {
                         }
 
                         XFile? image = await _controller?.takePicture();
-
+                        if (!context.mounted) return;
+                        print(image!.path);
                         Navigator.of(context).push(SlidePageRoute(
                             page: ImageViewPage(
                           imagePath: image!.path,

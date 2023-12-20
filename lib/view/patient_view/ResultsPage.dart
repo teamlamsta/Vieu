@@ -9,10 +9,10 @@ import 'package:vieu/view/patient_view/Select_Doctor.dart';
 import 'package:vieu/view/patient_view/component_widgets/Comment_View.dart';
 
 class ResultsPage extends StatefulWidget {
-  const ResultsPage(
+   ResultsPage(
       {super.key, required this.imagePath, required this.prediction});
 
-  final String imagePath;
+   String imagePath;
   final String prediction;
 
   @override
@@ -25,15 +25,12 @@ class _ResultsPageState extends State<ResultsPage> {
   String fileName = "";
   File? attachment;
   TextEditingController commentController = TextEditingController();
-  @override
-  void dispose() {
-    // TODO: implement dispose
 
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
+    print("At results page"+widget.imagePath);
+
     final size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Theme.of(context).backgroundColor,

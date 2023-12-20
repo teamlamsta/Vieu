@@ -92,7 +92,7 @@ class _MarkFindingsPageState extends State<MarkFindingsPage> {
   }
 
   void nextPage(String imagePath) {
-    Navigator.popUntil(context, ModalRoute.withName('/doctor_homepage'));
+    Navigator.pop(context);
     widget.data['imagePath'] = imagePath;
     Navigator.push(
         context,
