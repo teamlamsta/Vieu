@@ -166,67 +166,71 @@ class _ResultsPageState extends State<ResultsPage> {
                     Padding(
                       padding: EdgeInsets.only(
                           top: size.height * .03, bottom: size.height * .01),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            height: size.height * .08,
-                            width: size.width * .7,
-                            child: TextField(
-                              controller: commentController,
-                              decoration: InputDecoration(
-                                  fillColor: Colors.white,
-                                  filled: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                      horizontal: size.width * .05,
-                                      vertical: size.height * .01),
-                                  suffixIcon: IconButton(
-                                      onPressed: () async {
-                                        final result =
-                                            await FilePicker.platform.pickFiles(
-                                          allowMultiple: false,
-                                        );
-                                        PlatformFile? file =
-                                            result?.files.first;
-                                        fileName = file!.name;
-                                        setState(() {});
+                      child: SizedBox(
+                        height: size.height * .07,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              height: size.height * .06,
+                              width: size.width * .7,
+                              child: TextField(
+                                controller: commentController,
+                                decoration: InputDecoration(
+                                    fillColor: Colors.white,
+                                    filled: true,
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: size.width * .05,
+                                        vertical: size.height * .01),
+                                    suffixIcon: IconButton(
+                                        onPressed: () async {
+                                          final result =
+                                              await FilePicker.platform.pickFiles(
+                                            allowMultiple: false,
+                                          );
+                                          PlatformFile? file =
+                                              result?.files.first;
+                                          fileName = file!.name;
+                                          setState(() {});
 
-                                        attachment = File(file.path!);
-                                      },
-                                      icon: const Icon(
-                                        Icons.attach_file_rounded,
+                                          attachment = File(file.path!);
+                                        },
+                                        icon: const Icon(
+                                          Icons.attach_file_rounded,
+                                          color: Colors.black,
+                                        )),
+                                    hintText: "Add Comment",
+                                    hintStyle: GoogleFonts.poppins(
                                         color: Colors.black,
-                                      )),
-                                  hintText: "Add Comment",
-                                  hintStyle: GoogleFonts.poppins(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w500),
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10))),
+                                        fontWeight: FontWeight.w500),
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(10))),
+                              ),
                             ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.all(size.width * .03),
-                              backgroundColor:
-                                  Theme.of(context).primaryColorDark,
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                Radius.circular(20),
-                              )),
-                            ),
-                            onPressed: () {
-                              if (commentController.text.isNotEmpty) {
-                                setState(() {
-                                  comment = commentController.text;
-                                });
-                              }
-                              commentController.clear();
-                            },
-                            child: const Icon(Icons.send_rounded,
-                                color: Colors.white),
-                          )
-                        ],
+                            ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                padding: EdgeInsets.all(size.width * .03),
+                                backgroundColor:
+                                    Theme.of(context).primaryColorDark,
+                                shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                  Radius.circular(20),
+                                )),
+                              ),
+                              onPressed: () {
+                                if (commentController.text.isNotEmpty) {
+                                  setState(() {
+                                    comment = commentController.text;
+                                  });
+                                }
+                                commentController.clear();
+                              },
+                              child: const Icon(Icons.send_rounded,
+                                  color: Colors.white),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                     comment == ""

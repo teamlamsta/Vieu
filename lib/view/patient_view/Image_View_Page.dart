@@ -45,12 +45,12 @@ class _ImageViewPageState extends State<ImageViewPage> {
 
   Future<void> loadModel() async {
     try {
-      _interpreter = await Interpreter.fromAsset('assets/models/model.tflite');
-      setState(() {});
-      print('Model loaded successfully');
+      _interpreter = await Interpreter.fromAsset('assets/models/detect_quant.tflite');
+
+
     } catch (e) {
       print('Failed to load model.');
-      print(e);
+
     }
   }
 
@@ -81,8 +81,8 @@ class _ImageViewPageState extends State<ImageViewPage> {
     img.Image? image = img.decodeImage(imageFile.readAsBytesSync());
 
     // Resize the image to match the model's input dimensions (320x320)
-
-    image = img.copyResize(image!, width: 320, height: 320);
+    image = img.copyResizeCropSquare(image!, image.width);
+    image = img.copyResize(image, width: 320, height: 320);
 
     var tensorImage = TensorImage.fromImage(image);
 
@@ -100,6 +100,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
       _interpreter!.runForMultipleInputs([tensorImage.buffer], outputs);
 
       // Loop over all detections and draw detection box if confidence is above the minimum threshold
+
       for (int i = 0; i < outputs[1]?[0].length; i++) {
         double score = outputs[0]?[0][i];
         if (score > min_conf_threshold && score <= 1.0) {
@@ -109,6 +110,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
           double xMax = outputs[1]?[0][i][3];
 
           // Draw detection box
+
           image = drawDetectionBox(image!, yMin, xMin, yMax, xMax);
         }
       }
@@ -119,14 +121,12 @@ class _ImageViewPageState extends State<ImageViewPage> {
           widget.imagePath.replaceAll('.jpg', 'modified.png');
       await File(updatedImagePath).writeAsBytes(modifiedBytes);
 
-      print(updatedImagePath);
+
       return updatedImagePath;
 
       // Print each output tensor
     } catch (err) {
-      print("errorr........................");
 
-      print(err.toString());
       return "";
     }
   }
@@ -232,7 +232,7 @@ class _ImageViewPageState extends State<ImageViewPage> {
   }
 
   Future<String> _resizeImage(String path) async {
-    print("image before resizing${path}");
+
     final originalBytes = await File(path).readAsBytes();
     final originalImage = img.decodeImage(Uint8List.fromList(originalBytes));
 

@@ -117,7 +117,7 @@ class _PatientRecentsPageState extends State<PatientRecentsPage> {
 
     final result = await database!.rawQuery(
         'select * from request where patientName = "$patientName" and status = "$status" order by createdAt desc');
-    print(result);
+
 
 
     return result;

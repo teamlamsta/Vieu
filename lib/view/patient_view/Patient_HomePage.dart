@@ -28,6 +28,8 @@ class HomePageState extends State<HomePage> {
   late List<CameraDescription> cameras;
   late CameraDescription selectedCamera;
   bool isControllerInitialized = false;
+  bool isFlashOn = false;
+  double zoomLevel = 1.0;
 
   @override
   void initState() {
@@ -35,17 +37,13 @@ class HomePageState extends State<HomePage> {
     initialize();
   }
 
-
-
   void initialize() async {
-
-
     cameras = await availableCameras();
     selectedCamera = cameras.first;
 
     _controller = CameraController(
       selectedCamera,
-      ResolutionPreset.high,
+      ResolutionPreset.max,
     );
 
     await _controller?.initialize();
@@ -80,17 +78,20 @@ class HomePageState extends State<HomePage> {
         ),
         backgroundColor: Theme.of(context).backgroundColor,
         elevation: 0,
-        actions:  [
-         PopupMenuButton(itemBuilder: (ctx){
-           return [
-              PopupMenuItem(child: const Text("Logout"),onTap: ()async{
-               final ref = await SharedPreferences.getInstance();
-               ref.clear();
-               if (!context.mounted) return;
-               Navigator.pushReplacementNamed(context, '/login');
-             },)
-           ];
-         })
+        actions: [
+          PopupMenuButton(itemBuilder: (ctx) {
+            return [
+              PopupMenuItem(
+                child: const Text("Logout"),
+                onTap: () async {
+                  final ref = await SharedPreferences.getInstance();
+                  ref.clear();
+                  if (!context.mounted) return;
+                  Navigator.pushReplacementNamed(context, '/login');
+                },
+              )
+            ];
+          })
         ],
       ),
       body: Column(
@@ -98,7 +99,7 @@ class HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
-              height: MediaQuery.of(context).size.height * .75,
+              height: MediaQuery.of(context).size.height * .65,
               width: MediaQuery.of(context).size.width * .9,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -125,9 +126,104 @@ class HomePageState extends State<HomePage> {
                       }
                       // Check if _controller is not null before using it
 
-                      return CameraPreview(_controller!);
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          SizedBox(
+                              width: size.width * .9,
+                              child: CameraPreview(_controller!)),
+                          ColorFiltered(
+                              colorFilter: ColorFilter.mode(
+                                  Colors.black.withOpacity(0.7),
+                                  BlendMode.srcOut),
+                              child: Stack(fit: StackFit.expand,
+                                  children: [
+                                    Container(
+                                      decoration: const BoxDecoration(
+                                          color: Colors.black,
+                                          backgroundBlendMode: BlendMode.dstOut), // This one will handle background + difference out
+                                    ),
+
+                                Align(
+                                  alignment: Alignment.center,
+                                  child: Center(
+                                    child: Container(
+                                      height: size.width * .75,
+                                      width: size.width * .75,
+                                      decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          border: Border.all(
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                              width: 5),
+                                          borderRadius:
+                                              BorderRadius.circular(50)),
+                                    ),
+                                  ),
+                                )
+                              ])), Padding(
+                            padding: EdgeInsets.all(size.height * .02),
+                            child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: size.width * .025),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.circular(30)),
+                                  elevation: 3,
+                                  backgroundColor: Colors.black45,
+                                ),
+                                child: Icon(
+                                  Icons.flash_on,
+                                  color: isFlashOn
+                                      ? Colors.yellow
+                                      : Colors.white,
+                                ),
+                                onPressed: () {
+                                  HapticFeedback.mediumImpact();
+                                  setState(() {
+                                    isFlashOn = !isFlashOn;
+                                  });
+                                  _controller?.setFlashMode(isFlashOn
+                                      ? FlashMode.torch
+                                      : FlashMode.off);
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
                     },
                   ))),
+          SizedBox(
+            width: size.width * .7,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+              children: [const Padding(
+                padding: EdgeInsets.only(bottom: 10.0),
+                child: Icon(Icons.minimize_outlined),
+              ),
+                Slider(
+                  activeColor: Theme.of(context).primaryColor,
+                  label: zoomLevel.toString(),
+
+                  value: zoomLevel,
+                  onChanged: (value) {
+                    setState(() {
+                      zoomLevel = value;
+                    });
+                    _controller?.setZoomLevel(value);
+                  },
+                  min: 1,
+                  max: 5,
+                ),
+                Icon(Icons.add),
+              ],
+            ),
+          ),
           SizedBox(
             height: size.height * .1,
             child: Row(
