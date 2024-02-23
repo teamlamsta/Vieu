@@ -7,12 +7,17 @@
 
 #### 2. Clone this repo
 
-### 3. Run ''' pub get '''
+### 3. Run 
+    
+    pub get 
+    
 
-### 4. Start an emulator from android studio
+### 4. Start an emulator from Android Studio
 
-### 5. Run ''' flutter run '''
-
+ ### 5. Run the following command from the root folder
+    
+    flutter run
+   _
 
 Double check install instructions for all the plugins
 
