@@ -1,16 +1,21 @@
-# vieu
+# Vieu
 
-A new Flutter project.
+## Frontend Mobile App Installation
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+#### 1. [Setup Flutter](https://flutter.dev/docs/get-started/install)
 
-A few resources to get you started if this is your first Flutter project:
+#### 2. Clone this repo
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### 3. Run ''' pub get '''
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 4. Start an emulator from android studio
+
+### 5. Run ''' flutter run '''
+
+
+Double check install instructions for all the plugins
+
+
+- All the plugins used in this project are available in:
+    - https://pub.dev/
